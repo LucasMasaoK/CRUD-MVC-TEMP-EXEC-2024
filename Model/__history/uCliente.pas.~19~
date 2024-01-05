@@ -1,0 +1,76 @@
+unit uCliente;
+
+interface
+
+uses
+  uAcao, Datasnap.DBClient;
+
+type
+  TCliente = class
+  private
+    FCodigo: integer;
+    FNome: string;
+    FTipo: string;
+    FDocumento: string;
+    FTelefone: string;
+    FAcao: TAcao;
+
+  public
+    property Codigo: integer read FCodigo write FCodigo;
+    property Nome: string read FNome write FNome;
+    property Tipo: string read FTipo write FTipo;
+    property Documento: string read FDocumento write FDocumento;
+    property Telefone: string read FTelefone write FTelefone;
+    property Acao: TAcao read FAcao write FAcao;
+    function getID: integer;
+    function Inserir: Boolean;
+    function Editar: Boolean;
+    function Salvar: Boolean;
+    function Pesquisar(Pesquisa: string): TClientDataSet;
+    function Deletar: Boolean;
+  end;
+
+implementation
+
+uses uCliente.DAO;
+
+{ TCliente }
+
+function TCliente.Deletar: Boolean;
+begin
+  Result := dmCliente.Deletar(Self.Codigo);
+end;
+
+function TCliente.Editar: Boolean;
+begin
+  Result := dmCliente.Editar(Self);
+end;
+
+function TCliente.getID: integer;
+begin
+  Result := dmCliente.getID;
+end;
+
+function TCliente.Inserir: Boolean;
+begin
+  Result := dmCliente.Inserir(Self);
+end;
+
+function TCliente.Pesquisar(Pesquisa: string): TClientDataSet;
+begin
+  Result := dmCliente.Pesquisar(Pesquisa);
+end;
+
+function TCliente.Salvar: Boolean;
+begin
+  case Acao of
+    acInserir:
+      Result := Self.Inserir;
+    acEditar:
+      Result := Self.Editar;
+    acDeletar:
+      Result := Self.Deletar;
+  end;
+end;
+
+end.

@@ -1,0 +1,34 @@
+unit uCliente.Controller;
+
+interface
+
+uses
+  uCliente;
+
+type
+  TClienteController = class
+  private
+    FCliente: TCliente;
+
+  public
+  property Cliente: TCliente read FCliente write FCliente;
+  constructor Create;
+  destructor Destroy; override;
+  end;
+
+implementation
+
+{ TClienteController }
+
+constructor TClienteController.Create;
+begin
+  FCliente:=TCliente.Create;
+end;
+
+destructor TClienteController.Destroy;
+begin
+  FCliente.Free;
+  inherited;
+end;
+
+end.

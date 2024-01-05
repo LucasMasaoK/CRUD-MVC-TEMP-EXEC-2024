@@ -1,0 +1,150 @@
+unit uCliente.DAO;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, Datasnap.DBClient, SimpleDS,
+  uCliente, Datasnap.Provider, uDMConexao, Data.FMTBcd, Data.SqlExpr;
+
+type
+  TdmCliente = class(TDataModule)
+  private
+    FdmConexao: TdmConexao;
+    { Private declarations }
+  public
+    function getID: integer;
+    function Inserir(oCliente: TCliente): Boolean;
+    function Editar(oCliente: TCliente): Boolean;
+    function Pesquisar(Nome: string): TClientDataSet;
+    function Deletar(ID: integer): Boolean;
+
+  end;
+
+var
+  dmCliente: TdmCliente;
+
+implementation
+
+{ %CLASSGROUP 'System.Classes.TPersistent' }
+
+{$R *.dfm}
+{ TdmCliente }
+
+function TdmCliente.Deletar(ID: integer): Boolean;
+var
+  sdsDeletar: TSimpleDataSet;
+begin
+  sdsDeletar := TSimpleDataSet.Create(Nil);
+  try
+    sdsDeletar.Connection := DMConexao.DMConexao;
+    sdsDeletar.DataSet.CommandText := 'DELETE FROM CLIENTE WHERE ID= :ID';
+    sdsDeletar.DataSet.Params.ParamByName('ID').AsInteger := ID;
+  finally
+    FreeAndNil(sdsDeletar);
+  end;
+end;
+
+function TdmCliente.Editar(oCliente: TCliente): Boolean;
+var
+  sdsEditar: TSimpleDataSet;
+begin
+  sdsEditar := TSimpleDataSet.Create(nil);
+  try
+    with sdsEditar do
+    begin
+      Connection := DMConexao.DMConexao;
+      DataSet.CommandText := 'UPDATE CLIENTE ' +
+        'SET NOME = :NOME, TIPO = :TIPO, DOCUMENTO = :DOCUMENTO, TELEFONE = :TELEFONE '
+        + 'WHERE(ID = :ID)';
+      with sdsEditar.DataSet.Params, oCliente do
+      begin
+        ParamByName('ID').AsInteger := Codigo;
+        ParamByName('NOME').AsString := Nome;
+        ParamByName('TIPO').AsString := TIPO;
+        ParamByName('DOCUMENTO').AsString := DOCUMENTO;
+        ParamByName('TELEFONE').AsString := TELEFONE;
+      end;
+      try
+        Execute;
+        Result := True;
+      except
+        Result := False;
+      end;
+    end;
+  finally
+    FreeAndNil(sdsEditar);
+  end;
+end;
+
+function TdmCliente.getID: integer;
+var
+  sqlAux: TSQLQuery;
+begin
+  sqlAux := TSQLQuery.Create(nil);
+  try
+    with sqlAux do
+    begin
+      sqlAux.SQLConnection := DMConexao.DMConexao;
+      CommandText := 'SELECT coalesce(MAX(ID),0)+ 1 ID FROM CLIENTE';
+      Open;
+      Result := FieldByName('ID').AsInteger;
+    end;
+
+  finally
+    FreeAndNil(sqlAux);
+  end;
+end;
+
+function TdmCliente.Inserir(oCliente: TCliente): Boolean;
+var
+  sdsInserir: TSimpleDataSet;
+begin
+  sdsInserir := TSimpleDataSet.Create(nil);
+  try
+    with sdsInserir, oCliente do
+    begin
+      Connection := DMConexao.DMConexao;
+      DataSet.CommandText :=
+        'INSERT INTO CLIENTE (ID, NOME, TIPO, DOCUMENTO, TELEFONE) VALUES (:ID, :NOME, :TIPO, :DOCUMENTO, :TELEFONE)';
+      DataSet.Params.ParamByName('ID').AsInteger := Codigo;
+      DataSet.Params.ParamByName('NOME').AsString := Nome;
+      DataSet.Params.ParamByName('TIPO').AsString := TIPO;
+      DataSet.Params.ParamByName('DOCUMENTO').AsString := DOCUMENTO;
+      DataSet.Params.ParamByName('TELEFONE').AsString := TELEFONE;
+      try
+        Execute;
+        Result := True;
+      except
+        Result := False;
+      end;
+    end;
+  finally
+  end;
+end;
+
+function TdmCliente.Pesquisar(Nome: string): TClientDataSet;
+var
+  sqlPesquisar: TSQLQuery;
+  dspPesquisar: TDataSetProvider;
+  cdsPesquisar: TClientDataSet;
+begin
+  sqlPesquisar := TSQLQuery.Create(nil);
+  dspPesquisar := TDataSetProvider.Create(nil);
+  cdsPesquisar := TClientDataSet.Create(nil);
+  try
+    sqlPesquisar.SQLConnection := DMConexao.DMConexao;
+    sqlPesquisar.CommandText := 'SELECT * FROM CLIENTE WHERE NOME LIKE :NOME';
+    sqlPesquisar.Params.ParamByName('NOME').AsString := Nome + '%';
+    dspPesquisar.DataSet := sqlPesquisar;
+    cdsPesquisar.Close;
+    cdsPesquisar.SetProvider(dspPesquisar);
+    cdsPesquisar.FetchParams;
+    cdsPesquisar.Open;
+    Result := cdsPesquisar;
+  finally
+    FreeAndNil(sqlPesquisar);
+    FreeAndNil(dspPesquisar);
+  end;
+end;
+
+end.

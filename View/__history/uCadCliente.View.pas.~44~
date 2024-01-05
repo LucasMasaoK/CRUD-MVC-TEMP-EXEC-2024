@@ -1,0 +1,104 @@
+unit uCadCliente.View;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, CadModelo.View, Vcl.StdCtrls,
+  Vcl.ExtCtrls, uCliente.Controller;
+
+type
+  TfrmCadCliente = class(TfrmCadModelo)
+    editCodigo: TLabeledEdit;
+    editNome: TLabeledEdit;
+    editDocumento: TLabeledEdit;
+    editTelefone: TLabeledEdit;
+    comboTipo: TComboBox;
+    Label1: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure btnNovoClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnPesquisarClick(Sender: TObject);
+  private
+    procedure Novo;
+    procedure Selecionar;
+  public
+    oCliente: TClienteController;
+  end;
+
+var
+  frmCadCliente: TfrmCadCliente;
+
+implementation
+
+uses uAcao, uPesqCliente.View;
+{$R *.dfm}
+
+procedure TfrmCadCliente.btnEditarClick(Sender: TObject);
+begin
+  inherited;
+  oCliente.Cliente.Acao := TAcao.acEditar;
+end;
+
+procedure TfrmCadCliente.btnNovoClick(Sender: TObject);
+begin
+  inherited;
+  Self.Novo;
+end;
+
+procedure TfrmCadCliente.btnPesquisarClick(Sender: TObject);
+begin
+  Application.CreateForm(TfrmPesqCliente, frmPesqCliente);
+  frmPesqCliente.ShowModal;
+
+end;
+
+procedure TfrmCadCliente.btnSalvarClick(Sender: TObject);
+begin
+  inherited;
+  with oCliente.Cliente do
+  begin
+    Codigo := StrToInt(editCodigo.Text);
+    Nome := editNome.Text;
+    case comboTipo.ItemIndex of
+      0:
+        Tipo := 'J';
+      1:
+        Tipo := 'F';
+    end;
+
+    Documento := editDocumento.Text;
+    Telefone := editTelefone.Text;
+    if oCliente.Salvar then
+    begin
+      ShowMessage('Cliente Salvo com Sucesso!');
+    end;
+
+  else
+  begin
+    ShowMessage('Erro ao Salvar Cliente!');
+  end;
+end;
+end;
+
+procedure TfrmCadCliente.FormCreate(Sender: TObject);
+begin
+  inherited;
+  oCliente := TClienteController.Create;
+end;
+
+procedure TfrmCadCliente.Novo;
+begin
+  editCodigo.Text := IntToStr(oCliente.getID);
+  oCliente.Cliente.Acao := TAcao.acInserir;
+  editNome.SetFocus;
+end;
+
+procedure TfrmCadCliente.Selecionar;
+begin
+
+end;
+
+end.

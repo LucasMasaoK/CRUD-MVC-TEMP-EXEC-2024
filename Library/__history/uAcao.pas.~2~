@@ -1,0 +1,10 @@
+unit uAcao;
+
+interface
+
+type
+class TAcao = (acInserir, acEditar);
+
+implementation
+
+end.

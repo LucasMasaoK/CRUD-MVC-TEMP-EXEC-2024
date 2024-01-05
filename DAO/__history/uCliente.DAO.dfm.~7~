@@ -1,0 +1,31 @@
+object dmCliente: TdmCliente
+  OldCreateOrder = False
+  Height = 205
+  Width = 316
+  object sdsPesquisar: TSimpleDataSet
+    Aggregates = <>
+    DataSet.CommandText = 'SELECT * FROM CLIENTE WHERE NOME LIKE :NOME'
+    DataSet.MaxBlobSize = -1
+    DataSet.Params = <
+      item
+        DataType = ftUnknown
+        Name = 'NOME'
+        ParamType = ptInput
+      end>
+    Params = <>
+    Left = 80
+    Top = 32
+  end
+  object dspPesquisar: TDataSetProvider
+    DataSet = sdsPesquisar
+    Left = 72
+    Top = 88
+  end
+  object cdsPesquisar: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspPesquisar'
+    Left = 152
+    Top = 96
+  end
+end

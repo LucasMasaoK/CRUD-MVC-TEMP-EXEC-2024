@@ -1,0 +1,24 @@
+program MVC_EXEC2024;
+
+uses
+  Vcl.Forms,
+  uPrincipal.View in 'View\uPrincipal.View.pas' {frmPrincipal},
+  CadModelo.View in 'View\Modelo\CadModelo.View.pas' {frmCadModelo},
+  uCadCliente.View in 'View\uCadCliente.View.pas' {frmCadCliente},
+  uDMConexao in 'DAO\uDMConexao.pas' {dmConexao: TDataModule},
+  uCliente in 'Model\uCliente.pas',
+  uCliente.Controller in 'Controller\uCliente.Controller.pas',
+  uCliente.DAO in 'DAO\uCliente.DAO.pas' {DataModule1: TDataModule};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmPrincipal, frmPrincipal);
+  Application.CreateForm(TfrmCadModelo, frmCadModelo);
+  Application.CreateForm(TfrmCadCliente, frmCadCliente);
+  Application.CreateForm(TdmConexao, dmConexao);
+  Application.CreateForm(TDataModule1, DataModule1);
+  Application.Run;
+end.

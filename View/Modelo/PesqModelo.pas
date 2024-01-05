@@ -1,0 +1,32 @@
+unit PesqModelo;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
+  Vcl.DBGrids, Data.DB;
+
+type
+  TfrmPesqModelo = class(TForm)
+    Panel2: TPanel;
+    Panel1: TPanel;
+    dbGrid: TDBGrid;
+    btnPesquisar: TButton;
+    btnSelecionar: TButton;
+    editPesquisa: TLabeledEdit;
+    dsPesquisa: TDataSource;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPesqModelo: TfrmPesqModelo;
+
+implementation
+
+{$R *.dfm}
+
+end.
